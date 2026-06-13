@@ -1,0 +1,248 @@
+[2025-12-02 20:00:41,980 INFO train.py line 136 21572] => Loading config ...
+[2025-12-02 20:00:41,980 INFO train.py line 138 21572] Save path: exp/default
+[2025-12-02 20:00:42,136 INFO train.py line 139 21572] Config:
+weight = None
+resume = False
+evaluate = True
+test_only = False
+seed = 41954149
+save_path = 'exp/default'
+num_worker = 0
+batch_size = 2
+gradient_accumulation_steps = 1
+batch_size_val = None
+batch_size_test = None
+epoch = 200
+eval_epoch = 10
+clip_grad = None
+sync_bn = False
+enable_amp = False
+amp_dtype = 'float16'
+empty_cache = True
+empty_cache_per_epoch = False
+find_unused_parameters = False
+enable_wandb = False
+wandb_project = 'pointcept'
+wandb_key = None
+mix_prob = 0.8
+param_dicts = None
+hooks = [
+    dict(type='CheckpointLoader'),
+    dict(type='ModelHook'),
+    dict(type='IterationTimer', warmup_iter=2),
+    dict(type='InformationWriter'),
+    dict(type='SemSegEvaluator'),
+    dict(type='CheckpointSaver', save_freq=None),
+    dict(type='PreciseEvaluator', test_last=False)
+]
+train = dict(type='DefaultTrainer')
+test = dict(type='SemSegTester', verbose=True)
+model = dict(
+    type='DefaultSegmentorV2',
+    num_classes=2,
+    backbone_out_channels=32,
+    backbone=dict(
+        type='PT-v3m1',
+        in_channels=6,
+        order=('z', 'z-trans'),
+        stride=(2, 2, 2, 2),
+        enc_depths=(2, 2, 2, 2, 2),
+        enc_channels=(16, 32, 64, 128, 256),
+        enc_num_head=(1, 2, 4, 8, 16),
+        enc_patch_size=(64, 64, 64, 64, 64),
+        dec_depths=(2, 2, 2, 2),
+        dec_channels=(32, 32, 64, 128),
+        dec_num_head=(2, 2, 4, 8),
+        dec_patch_size=(64, 64, 64, 64),
+        mlp_ratio=2,
+        qkv_bias=True,
+        qk_scale=None,
+        attn_drop=0.0,
+        proj_drop=0.0,
+        drop_path=0.3,
+        shuffle_orders=True,
+        pre_norm=True,
+        enable_rpe=True,
+        enable_flash=False,
+        upcast_attention=True,
+        upcast_softmax=True,
+        enc_mode=False,
+        pdnorm_bn=False,
+        pdnorm_ln=False,
+        pdnorm_decouple=True,
+        pdnorm_adaptive=False,
+        pdnorm_affine=True,
+        pdnorm_conditions=('ScanNet', 'S3DIS', 'Structured3D')),
+    criteria=[dict(type='CrossEntropyLoss', loss_weight=1.0, ignore_index=-1)])
+optimizer = dict(type='AdamW', lr=0.001, weight_decay=0.01)
+scheduler = dict(type='CosineAnnealingLR')
+dataset_type = 'FARODataset'
+data_root = 'pointcept/datasets/data'
+num_classes = 2
+data = dict(
+    num_classes=2,
+    ignore_index=-1,
+    names=['class_0', 'class_1'],
+    train=dict(
+        type='FARODataset',
+        split='train',
+        data_root='pointcept/datasets/data',
+        use_color_labels=True,
+        num_classes=2,
+        color_mapping_mode='centers',
+        color_centers=[[0.789534, 0.913832, 0.000111],
+                       [0.108998, 0.779659, 0.218155]],
+        transform=[
+            dict(type='CenterShift', apply_z=True),
+            dict(
+                type='RandomDropout',
+                dropout_ratio=0.2,
+                dropout_application_ratio=0.2),
+            dict(
+                type='RandomRotate',
+                angle=[-1, 1],
+                axis='z',
+                center=[0, 0, 0],
+                p=0.5),
+            dict(
+                type='RandomRotate',
+                angle=[-0.015625, 0.015625],
+                axis='x',
+                p=0.5),
+            dict(
+                type='RandomRotate',
+                angle=[-0.015625, 0.015625],
+                axis='y',
+                p=0.5),
+            dict(type='RandomScale', scale=[0.9, 1.1]),
+            dict(type='RandomFlip', p=0.5),
+            dict(type='RandomJitter', sigma=0.005, clip=0.02),
+            dict(
+                type='GridSample',
+                grid_size=0.25,
+                hash_type='fnv',
+                mode='train',
+                return_grid_coord=True),
+            dict(type='SphereCrop', point_max=51200, mode='random'),
+            dict(type='CenterShift', apply_z=False),
+            dict(type='NormalizeColor'),
+            dict(type='ToTensor'),
+            dict(
+                type='Collect',
+                keys=('coord', 'grid_coord', 'segment'),
+                feat_keys=('coord', 'color'))
+        ],
+        test_mode=False,
+        loop=20),
+    val=dict(
+        type='FARODataset',
+        split='val',
+        data_root='pointcept/datasets/data',
+        use_color_labels=True,
+        num_classes=2,
+        color_mapping_mode='threshold',
+        color_threshold=0.5,
+        color_channel='mean',
+        threshold_low_class=0,
+        threshold_high_class=1,
+        transform=[
+            dict(type='CenterShift', apply_z=True),
+            dict(
+                type='GridSample',
+                grid_size=0.25,
+                hash_type='fnv',
+                mode='train',
+                return_grid_coord=True,
+                return_inverse=True),
+            dict(type='CenterShift', apply_z=False),
+            dict(type='NormalizeColor'),
+            dict(type='ToTensor'),
+            dict(
+                type='Collect',
+                keys=('coord', 'grid_coord', 'segment'),
+                feat_keys=('coord', 'color'))
+        ],
+        test_mode=False),
+    test=dict(
+        type='FARODataset',
+        split='test',
+        data_root='pointcept/datasets/data',
+        use_color_labels=True,
+        num_classes=2,
+        color_mapping_mode='threshold',
+        color_threshold=0.5,
+        color_channel='mean',
+        threshold_low_class=0,
+        threshold_high_class=1,
+        transform=[
+            dict(type='CenterShift', apply_z=True),
+            dict(type='NormalizeColor')
+        ],
+        test_mode=True,
+        test_cfg=dict(
+            voxelize=dict(
+                type='GridSample',
+                grid_size=0.25,
+                hash_type='fnv',
+                mode='test',
+                return_grid_coord=True),
+            crop=None,
+            post_transform=[
+                dict(type='CenterShift', apply_z=False),
+                dict(type='ToTensor'),
+                dict(
+                    type='Collect',
+                    keys=('coord', 'grid_coord', 'index'),
+                    feat_keys=('coord', 'color'))
+            ],
+            aug_transform=[[{
+                'type': 'RandomRotateTargetAngle',
+                'angle': [0],
+                'axis': 'z',
+                'center': [0, 0, 0],
+                'p': 1
+            }]])))
+num_worker_per_gpu = 0
+batch_size_per_gpu = 2
+batch_size_val_per_gpu = 1
+batch_size_test_per_gpu = 1
+
+[2025-12-02 20:00:42,138 INFO train.py line 140 21572] => Building model ...
+[2025-12-02 20:00:42,177 INFO train.py line 260 21572] Num params: 8061580
+[2025-12-02 20:00:42,266 INFO train.py line 142 21572] => Building writer ...
+[2025-12-02 20:00:42,268 INFO train.py line 270 21572] Tensorboard writer logging dir: exp/default
+[2025-12-02 20:00:42,269 INFO train.py line 144 21572] => Building train dataset & dataloader ...
+[2025-12-02 20:00:42,300 INFO faro.py line 135 21572] 使用颜色标签模式，从 pointcept/datasets/data 读取数据
+[2025-12-02 20:00:42,303 INFO faro.py line 195 21572] Shuffled 215 training samples
+[2025-12-02 20:00:42,304 INFO faro.py line 114 21572] FARO Dataset - train: 215 samples
+[2025-12-02 20:00:42,304 INFO train.py line 146 21572] => Building val dataset & dataloader ...
+[2025-12-02 20:00:42,306 INFO faro.py line 135 21572] 使用颜色标签模式，从 pointcept/datasets/data 读取数据
+[2025-12-02 20:00:42,308 INFO faro.py line 114 21572] FARO Dataset - val: 215 samples
+[2025-12-02 20:00:42,309 INFO train.py line 148 21572] => Building optimize, scheduler, scaler(amp) ...
+[2025-12-02 20:00:42,312 INFO train.py line 152 21572] => Building hooks ...
+[2025-12-02 20:00:42,312 INFO misc.py line 238 21572] => Loading checkpoint & weight ...
+[2025-12-02 20:00:42,313 INFO misc.py line 275 21572] No weight found at: None
+[2025-12-02 20:00:42,313 INFO train.py line 160 21572] >>>>>>>>>>>>>>>> Start Training >>>>>>>>>>>>>>>>
+[2025-12-02 20:00:42,804 ERROR events.py line 611 21572] Traceback (most recent call last):
+  File "C:\Users\91184\Desktop\PointTransformerV3-main\PointTransformerV3-main\Pointcept\pointcept\engines\train.py", line 169, in train
+    for (
+  File "C:\Users\91184\.conda\envs\pointcept\lib\site-packages\torch\utils\data\dataloader.py", line 630, in __next__
+    data = self._next_data()
+  File "C:\Users\91184\.conda\envs\pointcept\lib\site-packages\torch\utils\data\dataloader.py", line 674, in _next_data
+    data = self._dataset_fetcher.fetch(index)  # may raise StopIteration
+  File "C:\Users\91184\.conda\envs\pointcept\lib\site-packages\torch\utils\data\_utils\fetch.py", line 51, in fetch
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+  File "C:\Users\91184\.conda\envs\pointcept\lib\site-packages\torch\utils\data\_utils\fetch.py", line 51, in <listcomp>
+    data = [self.dataset[idx] for idx in possibly_batched_index]
+  File "C:\Users\91184\Desktop\PointTransformerV3-main\PointTransformerV3-main\Pointcept\pointcept\datasets\faro.py", line 353, in __getitem__
+    return self.prepare_train_data(idx)
+  File "C:\Users\91184\Desktop\PointTransformerV3-main\PointTransformerV3-main\Pointcept\pointcept\datasets\faro.py", line 308, in prepare_train_data
+    data_dict = self.transform(data_dict)
+  File "C:\Users\91184\Desktop\PointTransformerV3-main\PointTransformerV3-main\Pointcept\pointcept\datasets\transform.py", line 1268, in __call__
+    data_dict = t(data_dict)
+  File "C:\Users\91184\Desktop\PointTransformerV3-main\PointTransformerV3-main\Pointcept\pointcept\datasets\transform.py", line 848, in __call__
+    data_dict = index_operator(data_dict, idx_unique)
+  File "C:\Users\91184\Desktop\PointTransformerV3-main\PointTransformerV3-main\Pointcept\pointcept\datasets\transform.py", line 40, in index_operator
+    data_dict[key] = data_dict[key][index]
+IndexError: index 558991 is out of bounds for axis 0 with size 0
+

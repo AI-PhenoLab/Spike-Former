@@ -1,0 +1,20 @@
+# ninja log v6
+45	8183	7849693952113009	C:/Users/91184/Desktop/PointTransformerV3-main/PointTransformerV3-main/Pointcept/libs/pointops/build/temp.win-amd64-cpython-38/Release/src/grouping/grouping_cuda.obj	5ee83a14b4f8383a
+81	8310	7849693952480412	C:/Users/91184/Desktop/PointTransformerV3-main/PointTransformerV3-main/Pointcept/libs/pointops/build/temp.win-amd64-cpython-38/Release/src/sampling/sampling_cuda.obj	8a4d0ac411561e49
+34	8412	7849693952008260	C:/Users/91184/Desktop/PointTransformerV3-main/PointTransformerV3-main/Pointcept/libs/pointops/build/temp.win-amd64-cpython-38/Release/src/attention/attention_cuda.obj	635f3ec708ff5272
+20	8508	7849693951869849	C:/Users/91184/Desktop/PointTransformerV3-main/PointTransformerV3-main/Pointcept/libs/pointops/build/temp.win-amd64-cpython-38/Release/src/aggregation/aggregation_cuda.obj	c7e6190881fd3cdc
+72	8545	7849693952385151	C:/Users/91184/Desktop/PointTransformerV3-main/PointTransformerV3-main/Pointcept/libs/pointops/build/temp.win-amd64-cpython-38/Release/src/random_ball_query/random_ball_query_cuda.obj	4a0a9ea5b20f638e
+59	8562	7849693952301476	C:/Users/91184/Desktop/PointTransformerV3-main/PointTransformerV3-main/Pointcept/libs/pointops/build/temp.win-amd64-cpython-38/Release/src/knn_query/knn_query_cuda.obj	c99749e511015984
+88	8577	7849693952545753	C:/Users/91184/Desktop/PointTransformerV3-main/PointTransformerV3-main/Pointcept/libs/pointops/build/temp.win-amd64-cpython-38/Release/src/subtraction/subtraction_cuda.obj	40c2c8fd82d09faf
+52	8599	7849693952193667	C:/Users/91184/Desktop/PointTransformerV3-main/PointTransformerV3-main/Pointcept/libs/pointops/build/temp.win-amd64-cpython-38/Release/src/interpolation/interpolation_cuda.obj	c2d9f5c93d53b68b
+40	8623	7849693952069603	C:/Users/91184/Desktop/PointTransformerV3-main/PointTransformerV3-main/Pointcept/libs/pointops/build/temp.win-amd64-cpython-38/Release/src/ball_query/ball_query_cuda.obj	93c410e00fc03c53
+69	13701	7849693952353027	C:/Users/91184/Desktop/PointTransformerV3-main/PointTransformerV3-main/Pointcept/libs/pointops/build/temp.win-amd64-cpython-38/Release/src/pointops_api.obj	b0313c079042214c
+47	21719	7849693952136684	C:/Users/91184/Desktop/PointTransformerV3-main/PointTransformerV3-main/Pointcept/libs/pointops/build/temp.win-amd64-cpython-38/Release/src/grouping/grouping_cuda_kernel.obj	c2f0660069d6456a
+75	21757	7849693952414254	C:/Users/91184/Desktop/PointTransformerV3-main/PointTransformerV3-main/Pointcept/libs/pointops/build/temp.win-amd64-cpython-38/Release/src/random_ball_query/random_ball_query_cuda_kernel.obj	70fc89280db86d5f
+66	21771	7849693952323131	C:/Users/91184/Desktop/PointTransformerV3-main/PointTransformerV3-main/Pointcept/libs/pointops/build/temp.win-amd64-cpython-38/Release/src/knn_query/knn_query_cuda_kernel.obj	324b70fbb670dabb
+26	21785	7849693951934265	C:/Users/91184/Desktop/PointTransformerV3-main/PointTransformerV3-main/Pointcept/libs/pointops/build/temp.win-amd64-cpython-38/Release/src/aggregation/aggregation_cuda_kernel.obj	7ac11ea8f2f77c42
+91	21805	7849693952578603	C:/Users/91184/Desktop/PointTransformerV3-main/PointTransformerV3-main/Pointcept/libs/pointops/build/temp.win-amd64-cpython-38/Release/src/subtraction/subtraction_cuda_kernel.obj	c460db66c0374272
+54	21926	7849693952213598	C:/Users/91184/Desktop/PointTransformerV3-main/PointTransformerV3-main/Pointcept/libs/pointops/build/temp.win-amd64-cpython-38/Release/src/interpolation/interpolation_cuda_kernel.obj	1dfa2b48e9caa4d5
+37	22094	7849693952038188	C:/Users/91184/Desktop/PointTransformerV3-main/PointTransformerV3-main/Pointcept/libs/pointops/build/temp.win-amd64-cpython-38/Release/src/attention/attention_cuda_kernel.obj	7683ce02d94ad17b
+42	22187	7849693952079980	C:/Users/91184/Desktop/PointTransformerV3-main/PointTransformerV3-main/Pointcept/libs/pointops/build/temp.win-amd64-cpython-38/Release/src/ball_query/ball_query_cuda_kernel.obj	bdbe10575f457ff0
+84	22320	7849693952505289	C:/Users/91184/Desktop/PointTransformerV3-main/PointTransformerV3-main/Pointcept/libs/pointops/build/temp.win-amd64-cpython-38/Release/src/sampling/sampling_cuda_kernel.obj	4846a2703130ebf2

@@ -1,0 +1,266 @@
+================================================================================
+                    simple_visualize_faro.py 使用说明
+================================================================================
+
+一、功能简介
+--------------------------------------------------------------------------------
+simple_visualize_faro.py 是一个用于 FARO 数据集分类评估的脚本。它可以：
+  - 对训练好的模型进行批量推理
+  - 计算详细的分类指标（准确率、精确率、召回率、F1分数等）
+  - 生成混淆矩阵、ROC曲线、PR曲线等可视化图表
+  - 保存完整的评估报告到文本文件
+
+所有图表使用英文标签和 Times New Roman 字体，适合学术论文使用。
+
+
+二、依赖安装
+--------------------------------------------------------------------------------
+运行脚本前，需要安装以下 Python 包：
+
+  pip install matplotlib seaborn scikit-learn cycler
+
+如果网络较慢，可以使用清华镜像源：
+
+  pip install matplotlib seaborn scikit-learn cycler -i https://pypi.tuna.tsinghua.edu.cn/simple
+
+
+三、使用方法
+--------------------------------------------------------------------------------
+
+3.1 基本用法
+
+  cd Pointcept
+  python tools/simple_visualize_faro.py \
+      --config-file configs/faro/semseg-pt-v3m1-0-cuda12.py \
+      --weight exp/faro/my_faro_training/model/model_best.pth \
+      --input-dir pointcept/datasets/0329_FARO_part_1/test \
+      --output-dir evaluation_results
+
+3.2 参数说明
+
+  --config-file (必需)
+      配置文件路径
+      示例: configs/faro/semseg-pt-v3m1-0-cuda12.py
+
+  --weight (必需)
+      模型权重文件路径（.pth 文件）
+      示例: exp/faro/my_faro_training/model/model_best.pth
+
+  --input-dir (可选，默认: pointcept/datasets/0329_FARO_part_1/test)
+      输入 PLY 文件目录
+      脚本会自动扫描该目录下的所有 .ply 文件
+
+  --num-samples (可选，默认: 全部)
+      要评估的样本数量
+      示例: --num-samples 20  (只评估前20个文件)
+
+  --output-dir (可选，默认: vis_results)
+      输出目录，所有结果将保存到此目录
+
+  --options (可选)
+      其他配置选项，格式为 key=value
+      示例: --options data.test.split=test model.num_classes=2
+
+
+3.3 使用示例
+
+示例1: 评估所有测试文件
+  python tools/simple_visualize_faro.py \
+      --config-file configs/faro/semseg-pt-v3m1-0-cuda12.py \
+      --weight exp/faro/my_faro_training/model/model_best.pth \
+      --output-dir evaluation_results
+
+示例2: 只评估前50个文件
+  python tools/simple_visualize_faro.py \
+      --config-file configs/faro/semseg-pt-v3m1-0-cuda12.py \
+      --weight exp/faro/my_faro_training/model/model_best.pth \
+      --num-samples 50 \
+      --output-dir evaluation_results
+
+示例3: 指定自定义输入目录
+  python tools/simple_visualize_faro.py \
+      --config-file configs/faro/semseg-pt-v3m1-0-cuda12.py \
+      --weight exp/faro/my_faro_training/model/model_best.pth \
+      --input-dir /path/to/your/ply/files \
+      --output-dir evaluation_results
+
+
+四、输出文件说明
+--------------------------------------------------------------------------------
+脚本会在指定的输出目录中生成以下文件：
+
+4.1 confusion_matrix.png
+    混淆矩阵热力图
+    - 显示真实标签 vs 预测标签的分布
+    - 可以直观看到分类错误的情况
+    - 使用 YlGnBu 配色方案（黄绿蓝渐变）
+    - 分辨率: 300 DPI
+
+4.2 roc_curve.png
+    ROC 曲线（接收者操作特征曲线）
+    - 显示真阳性率 vs 假阳性率
+    - 包含 AUC 值（Area Under Curve）
+    - AUC 越接近 1.0，分类性能越好
+    - 主曲线颜色: 深绿色 (#2E7D32)
+    - 分辨率: 300 DPI
+
+4.3 pr_curve.png
+    PR 曲线（精确率-召回率曲线）
+    - 显示精确率 vs 召回率的关系
+    - 包含 AUC 值
+    - 适用于类别不平衡的情况
+    - 曲线颜色: 深紫色 (#6A1B9A)
+    - 分辨率: 300 DPI
+
+4.4 metrics.txt
+    详细的分类指标报告（文本格式）
+    包含：
+    - 整体指标: 准确率、精确率、召回率、F1分数、ROC AUC、PR AUC
+    - 各类别指标: 每个类别的精确率、召回率、F1分数
+    - 详细分类报告: 包含支持度（样本数）等信息
+
+
+五、指标说明
+--------------------------------------------------------------------------------
+
+5.1 整体指标
+
+  准确率 (Accuracy)
+      正确预测的样本数 / 总样本数
+      范围: 0.0 - 1.0，越高越好
+
+  精确率 (Precision)
+      预测为正类的样本中，真正为正类的比例
+      范围: 0.0 - 1.0，越高越好
+
+  召回率 (Recall)
+      真实为正类的样本中，被正确预测为正类的比例
+      范围: 0.0 - 1.0，越高越好
+
+  F1分数 (F1-Score)
+      精确率和召回率的调和平均数
+      公式: F1 = 2 * (Precision * Recall) / (Precision + Recall)
+      范围: 0.0 - 1.0，越高越好
+
+  ROC AUC
+      ROC 曲线下的面积
+      衡量分类器的整体性能
+      范围: 0.0 - 1.0，1.0 表示完美分类器
+
+  PR AUC
+      PR 曲线下的面积
+      适用于类别不平衡的情况
+      范围: 0.0 - 1.0，越高越好
+
+5.2 各类别指标
+
+  对于每个类别（crop 和 plane），会显示：
+  - 精确率: 该类别预测的准确性
+  - 召回率: 该类别被正确识别的比例
+  - F1分数: 精确率和召回率的平衡
+
+
+六、真实标签提取规则
+--------------------------------------------------------------------------------
+脚本会自动从文件名或路径中提取真实标签：
+
+  类别 0 (crop):
+    - 文件名以 "class0_" 开头
+    - 文件路径包含 "crop_"
+
+  类别 1 (plane):
+    - 文件名以 "class1_" 开头
+    - 文件路径包含 "plane__"
+
+  如果无法确定真实标签，该文件会被跳过，并显示警告信息。
+
+
+七、注意事项
+--------------------------------------------------------------------------------
+
+1. 脚本使用非交互式 matplotlib 后端，不会弹出显示窗口
+   所有图表直接保存为 PNG 文件
+
+2. 如果点云文件太大（超过 50000 个点），会自动进行随机下采样
+   这是为了避免内存溢出问题
+
+3. 脚本会自动从配置文件中读取 grid_size 参数
+   如果配置文件中没有，默认使用 0.25
+
+4. 所有图表使用 Times New Roman 字体和英文标签
+   适合直接用于学术论文
+
+5. 确保模型权重文件路径正确，且与配置文件匹配
+
+6. 输入目录必须包含有效的 .ply 文件
+
+7. 脚本会自动创建输出目录（如果不存在）
+
+
+八、故障排除
+--------------------------------------------------------------------------------
+
+问题1: ModuleNotFoundError: No module named 'cycler'
+解决: pip install cycler
+
+问题2: ModuleNotFoundError: No module named 'seaborn'
+解决: pip install seaborn
+
+问题3: ModuleNotFoundError: No module named 'sklearn'
+解决: pip install scikit-learn
+
+问题4: 无法确定真实标签
+解决: 
+  - 确保文件名包含 "class0_" 或 "class1_" 前缀
+  - 或者文件路径包含 "crop_" 或 "plane__" 子字符串
+
+问题5: CUDA out of memory
+解决:
+  - 减少 --num-samples 参数值
+  - 或者在配置文件中进一步减小模型大小
+
+问题6: 找不到 PLY 文件
+解决:
+  - 检查 --input-dir 路径是否正确
+  - 确保目录中包含 .ply 文件
+
+问题7: 模型加载失败
+解决:
+  - 检查 --weight 路径是否正确
+  - 确保权重文件与配置文件匹配
+  - 检查模型架构是否一致
+
+
+九、技术细节
+--------------------------------------------------------------------------------
+
+9.1 分类方法
+  脚本使用两种方法进行点云分类：
+  1. 投票法: 统计每个类别的预测点数
+  2. 平均概率法: 计算所有点的平均概率（默认使用）
+
+9.2 数据预处理
+  - 坐标中心化（减去均值）
+  - 颜色归一化（如果值大于1.0，则除以255）
+  - 自动下采样（如果点数超过50000）
+
+9.3 图表设置
+  - 字体: Times New Roman
+  - 分辨率: 300 DPI
+  - 配色: 柔和的学术风格配色
+  - 网格: 虚线，透明度0.3
+
+
+十、联系与支持
+--------------------------------------------------------------------------------
+如有问题，请检查：
+  1. 配置文件是否正确
+  2. 模型权重是否匹配
+  3. 输入数据格式是否正确
+  4. 依赖包是否完整安装
+
+
+================================================================================
+                              使用愉快！
+================================================================================
+
