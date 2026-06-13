@@ -1,6 +1,6 @@
-# Welcome use 3D Wheat PT
+# Welcome use 3D Spike Former
 
-Welcome to 3D Wheat PT, we will tell you how to use each module of the application, as well as the environment configuration of the software.
+Welcome to 3D Spike Former, we will tell you how to use each module of the application, as well as the environment configuration of the software.
 
 ## Installation
 To run.py files, you need to install the following libraries
@@ -47,7 +47,7 @@ python train.py --config-file configs/faro/semseg-pt-v3m1-0-color-labels.py --nu
 ```
 If you wish to visualize point cloud, the following steps can be taken.
 ```javascript
-python inference_and_visualize_faro.py  --config-file  ./configs\faro\semseg-pt-v3m1-0-color-labels.py  --weight ./exp/faro/semseg-pt-v3m1-0-color-labels\model\model_best.pth  --save-path ./exp/faro/semseg-pt-v3m1-0-color-labels  --data-root pointcept/datasets/data/test1 --sample-idx 0
+python inference_and_visualize_faro.py  --config-file  ./configs/faro/semseg-pt-v3m1-0-color-labels.py  --weight ./exp/faro/semseg-pt-v3m1-0-color-labels/model/model_best.pth  --save-path ./exp/faro/semseg-pt-v3m1-0-color-labels  --data-root pointcept/datasets/data/test1 --sample-idx 0
 ```
 
 ## Peroration
